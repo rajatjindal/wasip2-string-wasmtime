@@ -9,6 +9,64 @@ import (
 	"github.com/ydnar/wasm-tools-go/cm"
 )
 
+// Error represents the variant "wasi:cli/environment@0.2.0#error".
+//
+//	variant error {
+//		invalid-name(string),
+//		undefined(string),
+//		provider(string),
+//		other(string),
+//	}
+type Error cm.Variant[uint8, string, string]
+
+// ErrorInvalidName returns a [Error] of case "invalid-name".
+//
+// The provided variable name is invalid.
+func ErrorInvalidName(data string) Error {
+	return cm.New[Error](0, data)
+}
+
+// InvalidName returns a non-nil *[string] if [Error] represents the variant case "invalid-name".
+func (self *Error) InvalidName() *string {
+	return cm.Case[string](self, 0)
+}
+
+// ErrorUndefined returns a [Error] of case "undefined".
+//
+// The provided variable is undefined.
+func ErrorUndefined(data string) Error {
+	return cm.New[Error](1, data)
+}
+
+// Undefined returns a non-nil *[string] if [Error] represents the variant case "undefined".
+func (self *Error) Undefined() *string {
+	return cm.Case[string](self, 1)
+}
+
+// ErrorProvider returns a [Error] of case "provider".
+//
+// A variables provider specific error has occurred.
+func ErrorProvider(data string) Error {
+	return cm.New[Error](2, data)
+}
+
+// Provider returns a non-nil *[string] if [Error] represents the variant case "provider".
+func (self *Error) Provider() *string {
+	return cm.Case[string](self, 2)
+}
+
+// ErrorOther returns a [Error] of case "other".
+//
+// Some implementation-specific error has occurred.
+func ErrorOther(data string) Error {
+	return cm.New[Error](3, data)
+}
+
+// Other returns a non-nil *[string] if [Error] represents the variant case "other".
+func (self *Error) Other() *string {
+	return cm.Case[string](self, 3)
+}
+
 // GetEnvironment represents the imported function "get-environment".
 //
 // Get the POSIX-style environment variables.
@@ -48,19 +106,33 @@ func GetArguments() (result cm.List[string]) {
 //go:noescape
 func wasmimport_GetArguments(result *cm.List[string])
 
-// Hello represents the imported function "hello".
+// Justhello represents the imported function "justhello".
 //
-//	hello: func() -> string
+//	justhello: func() -> string
 //
 //go:nosplit
-func Hello() (result string) {
+func Justhello() (result string) {
+	wasmimport_Justhello(&result)
+	return
+}
+
+//go:wasmimport wasi:cli/environment@0.2.0 justhello
+//go:noescape
+func wasmimport_Justhello(result *string)
+
+// Hello represents the imported function "hello".
+//
+//	hello: func() -> result<string, error>
+//
+//go:nosplit
+func Hello() (result cm.ErrResult[string, Error]) {
 	wasmimport_Hello(&result)
 	return
 }
 
 //go:wasmimport wasi:cli/environment@0.2.0 hello
 //go:noescape
-func wasmimport_Hello(result *string)
+func wasmimport_Hello(result *cm.ErrResult[string, Error])
 
 // InitialCWD represents the imported function "initial-cwd".
 //

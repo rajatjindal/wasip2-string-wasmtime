@@ -10,7 +10,24 @@ func main() {
 	fmt.Println("hello world")
 	result := environment.GetArguments()
 	fmt.Println("slice ", result.Slice())
-
 	fmt.Println("slice ", environment.InitialCWD())
-	fmt.Println("slice ", environment.Hello())
+
+	// following block does not print anything for value
+	// hello: func() -> result<string, error>;
+	{
+		hello := environment.Hello()
+		if hello.IsErr() {
+			fmt.Println("hello returned error ", hello.Err())
+			return
+		}
+
+		value := hello.OK()
+		fmt.Println("hello value is", *value)
+	}
+
+	// justhello: func() -> string;
+	{
+		justhello := environment.Justhello()
+		fmt.Println("just hello value is ", justhello)
+	}
 }
