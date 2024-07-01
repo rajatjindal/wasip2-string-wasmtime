@@ -22,7 +22,7 @@ func main() {
 		}
 
 		value := hello.OK()
-		fmt.Println("hello value is", *value)
+		fmt.Printf("hello value is %#v\n", *value)
 	}
 
 	// justhello: func() -> string;
