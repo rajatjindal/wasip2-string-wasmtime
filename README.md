@@ -1,7 +1,7 @@
 reproducing issue with wasm-tools-go
 
 - use tinygo version with support for wasip2
-- use wasmtime from fork: 
+- use wasmtime from fork: https://github.com/rajatjindal/wasmtime/pull/new/repro-string-issue
 
 ^^ the above fork only adds following two functions to environment.wit
 
